@@ -1,20 +1,30 @@
 <template>
     <div>
-     
+      <!-- <el-select v-model="query.address" placeholder="年份选择" class="handle-select mr10" @change="setyear($event)">
+                    <el-option key="3" label="2003" value="2003"></el-option>
+                    <el-option key="4" label="2004" value="2004"></el-option>
+                    <el-option key="5" label="2005" value="2005"></el-option>
+                    <el-option key="6" label="2006" value="2006"></el-option>
+                    <el-option key="7" label="2007" value="2007"></el-option>
+                    <el-option key="8" label="2008" value="2008"></el-option>
+                    <el-option key="9" label="2009" value="2009"></el-option>
+                    <el-option key="10" label="20010" value="20010"></el-option>
+                   
+                </el-select> -->
         <el-row :gutter="30">
-            <el-col :span="22">
+            <el-col :span="22"  v-loading="loading">
                 <el-card shadow="hover">
                     <schart ref="bar" class="schart" canvasId="bar" :options="options"></schart>
                 </el-card>
             </el-col>
-          
-        </el-row>
-        <el-row :gutter="30">
-            <el-col :span="12">
+          <!-- <el-col :span="12">
                 <el-card shadow="hover">
                     <schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
                 </el-card>
-            </el-col>
+            </el-col> -->
+        </el-row>
+        <el-row :gutter="30">
+            
         </el-row>
     </div>
 </template>
@@ -27,53 +37,46 @@ export default {
     data() {
         return {
             name: localStorage.getItem('ms_username'),
-           
+            query:{
+                address:''
+            },
+            address:'2009',
+            loading:true,
+           chartData:[],
             data: {
-                data:[],
-
+                chartData:[],
+               
             
             },
+            
             options: {
                 type: 'bar',
                 title: {
-                    text: '年销售图'
+                    text: '地区销售图'
                 },
                 xRorate: 25,
-                labels: ['一月', '二月', '三月', '四月', '五月','六月', '七月', '八月', '九月', '十月','十一月','十二月'],
+                // LJ--丽江；TAIHUA--太华山，即华山；YINZUO--银座；GUIHE--桂河；ZY--张掖；DONGGUAN--东莞；ZHAO--昆山；TY--太原；ZM--中牟；RM--天津；TS--唐山；HL--荷兰；TM--天门；BYYZ--白银；HUAXIN--襄阳；LZ--兰州；DY--定远
+                labels: ['丽江', '太华山', '银座', '桂河', '张掖','东莞', '昆山', '太原','中牟','天津','唐山','荷兰','天门','白银','襄阳','兰州','定远'],
                 datasets: [
                     {
-                        label: '饮料',
-                        data: [234, 278, 270, 190, 230,234, 278, 270, 190, 230,20,500]
+                        label: '每地销售额',
+                        data: [0, 0, 0, 0, 0,0, 0, 0,0,0,0,0]
                     },
-                    {
-                        label: '零食',
-                        data: [164, 178, 190, 135, 160,164, 178, 190, 135, 160,0,300]
-                    },
-                    {
-                        label: '泡面',
-                        data: [144, 198, 150, 235, 120,164, 178, 190, 135, 160,50,400]
-                    }
+                  
                 ]
             },
             options2: {
                 type: 'line',
                 title: {
-                    text: '最近几个月各品类销售趋势图'
+                    text: '月销售趋势图'
                 },
-                labels: ['6月', '7月', '8月', '9月', '10月'],
+                labels: ['1', '2', '3', '4', '5','6', '7', '8','9','10','11','12'],
                 datasets: [
                     {
-                        label: '家电',
-                        data: [234, 278, 270, 190, 230]
+                        label: '月销售额',
+                        data: [0, 0, 0, 0, 0,0, 0, 0,0,0,0,0]
                     },
-                    {
-                        label: '百货',
-                        data: [164, 178, 150, 135, 160]
-                    },
-                    {
-                        label: '食品',
-                        data: [74, 118, 200, 235, 90]
-                    }
+                   
                 ]
             }
         };
@@ -100,14 +103,45 @@ export default {
     },
     methods: {
         getData(){
-                
+        let that=this;
+          this.$axios.get('http://192.168.1.104:7000/hive/list6')
+            .then(function(response){
+                console.log(response)
+                that.chartData=response.data;
+                let temp=[]
+                let areas=[]
+                let nums=[];
+                that.chartData.forEach(element=>{
+                    areas.push(element.thelocation)
+                    nums.push(element.sumofamount)
+                })
+              //  that.options.labels=areas
+                that.options.datasets[0].data=nums
+                that.loading=false;
+            }) 
+        
+
+
+        },
+        setyear(){
+            let temp=[]
+            console.log(this.query.address)
+            console.log(this.chartData);
+                this.chartData.forEach(element => {
+
+                    if(element.theyear==this.query.address)
+                    temp.push(element.sumofamount)
+                });
+                let length=temp.length;
+                for(let i=length;i<12;i++){
+                    temp.push(0);
+                }
+                this.options.datasets[0].data=temp
+                this.options2.datasets[0].data=temp
         },
         changeDate() {
             const now = new Date().getTime();
-            this.data.forEach((item, index) => {
-                const date = new Date(now - (6 - index) * 86400000);
-                item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-            });
+            
         },
         handleListener() {
             bus.$on('collapse', this.handleBus);
@@ -237,4 +271,36 @@ export default {
     width: 100%;
     height: 300px;
 }
+
+
+.handle-box {
+    margin-bottom: 20px;
+}
+
+.handle-select {
+    width: 120px;
+}
+
+.handle-input {
+    width: 300px;
+    display: inline-block;
+}
+.table {
+    width: 100%;
+    font-size: 14px;
+}
+.red {
+    color: #ff0000;
+}
+.mr10 {
+    margin-right: 10px;
+}
+.table-td-thumb {
+    display: block;
+    margin: auto;
+    width: 40px;
+    height: 40px;
+}
+
+
 </style>

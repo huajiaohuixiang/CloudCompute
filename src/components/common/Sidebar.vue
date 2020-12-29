@@ -58,39 +58,56 @@ export default {
             items: [
                
                 
+                // {
+                //     icon: 'el-icon-lx-home',
+                //     index: 'dashboard',
+                //     title: '系统主页'
+                // },
                 {
-                    icon: 'el-icon-lx-home',
-                    index: 'dashboard',
-                    title: '系统主页'
+                    icon: 'el-icon-lx-people',
+                    index: 'allorder',
+                    title: '订单表',
+                 
+                },
+               
+                {
+                    icon: 'el-icon-lx-people',
+                    index: 'allarea',
+                    title: '地区表',
+                 
+                },
+                  {
+                    icon: 'el-icon-lx-people',
+                    index: 'alluser',
+                    title: '时间表',
+                 
                 },
                  {
                     icon: 'el-icon-lx-people',
-                    index: 'schart',
-                    title: '售卖机销售分析',
+                    index: 'yearInfo',
+                    title: '年度销售分析',
+                 
+                },
+                 {
+                    icon: 'el-icon-lx-calendar',
+                    index: 'monthInfo',
+                    title: '月销售分析',
                  
                 },
                 {
                     icon: 'el-icon-lx-calendar',
-                    index: '3',
-                    title: '商品销售分析',
-                    subs: [
-                        {
-                            index: 'packageInWarehouse',
-                            title: '商品销售情况'
-                        },
-                        {
-                            index: 'packageOutWare',
-                            title: '种类销售情况'
-                        },
-                      {
-                            index: 'ReceivePackage',
-                            title: '种类内部分析'
-                        },
-                       
-                    ]
+                    index: 'areaInfo',
+                    title: '地区销售分析',
+                 
+                },
+                {
+                    icon: 'el-icon-lx-calendar',
+                    index: 'searchCode',
+                    title: '前N季度查询',
+                    
                 },
                
-               
+
                 {
                     icon: 'el-icon-pie-chart',
                     index: '4',
@@ -98,24 +115,20 @@ export default {
                     subs: [
                        
                         {
-                            index: 'CupboardCapacity',
-                            title: '月销售'
+                            index: 'yearMaxGood',
+                            title: '年度最畅销的商品'
+                        },  
+                          {
+                            index: 'yearLessGood',
+                            title: '年度退货最多商品'
                         },   
                     ]
                 },
-                 {
-                    icon: 'el-icon-lx-search',
-                    index: 'dashboard',
-                    title: '商品查询'
-                },{
-                    icon:'el-icon-lx-search',
-                    index: '403',
-                    title: '寄件订单管理'
-                },
+              
                 {
                     icon:'el-icon-lx-comment',
-                    index:'messageManage',
-                    title:'消息管理'
+                    index:'searchOrderByPrice',
+                    title:'查询超过某价格订单'
                 },
                
             ]

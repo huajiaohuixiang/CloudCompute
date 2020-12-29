@@ -2,19 +2,19 @@
     <div>
      
         <el-row :gutter="30">
-            <el-col :span="22">
-                <el-card shadow="hover">
+            <el-col :span="12">
+                <el-card shadow="hover"  v-loading="loading">
                     <schart ref="bar" class="schart" canvasId="bar" :options="options"></schart>
                 </el-card>
             </el-col>
-          
-        </el-row>
-        <el-row :gutter="30">
-            <el-col :span="12">
-                <el-card shadow="hover">
+          <el-col :span="12">
+                <el-card shadow="hover"  v-loading="loading">
                     <schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
                 </el-card>
             </el-col>
+        </el-row>
+        <el-row :gutter="30">
+            
         </el-row>
     </div>
 </template>
@@ -28,52 +28,40 @@ export default {
         return {
             name: localStorage.getItem('ms_username'),
            
+           loading:true,
             data: {
-                data:[],
+                chartData:[],
 
             
             },
+            
             options: {
                 type: 'bar',
                 title: {
                     text: '年销售图'
                 },
                 xRorate: 25,
-                labels: ['一月', '二月', '三月', '四月', '五月','六月', '七月', '八月', '九月', '十月','十一月','十二月'],
+                labels: ['2003', '2004', '2005', '2006', '2007','2008', '2009', '2010'],
                 datasets: [
                     {
-                        label: '饮料',
-                        data: [234, 278, 270, 190, 230,234, 278, 270, 190, 230,20,500]
+                        label: '年度销售额',
+                        data: [0, 0, 0, 0, 0,0, 0, 0]
                     },
-                    {
-                        label: '零食',
-                        data: [164, 178, 190, 135, 160,164, 178, 190, 135, 160,0,300]
-                    },
-                    {
-                        label: '泡面',
-                        data: [144, 198, 150, 235, 120,164, 178, 190, 135, 160,50,400]
-                    }
+                  
                 ]
             },
             options2: {
                 type: 'line',
                 title: {
-                    text: '最近几个月各品类销售趋势图'
+                    text: '年度销售趋势图'
                 },
-                labels: ['6月', '7月', '8月', '9月', '10月'],
+                labels: ['2003', '2004', '2005', '2006', '2007','2008', '2009', '2010'],
                 datasets: [
                     {
-                        label: '家电',
-                        data: [234, 278, 270, 190, 230]
+                        label: '年度销售额',
+                        data: [0, 0, 0, 0, 0,0, 0, 0]
                     },
-                    {
-                        label: '百货',
-                        data: [164, 178, 150, 135, 160]
-                    },
-                    {
-                        label: '食品',
-                        data: [74, 118, 200, 235, 90]
-                    }
+                   
                 ]
             }
         };
@@ -100,14 +88,26 @@ export default {
     },
     methods: {
         getData(){
-                
+        let that=this;
+          this.$axios.get('http://192.168.1.104:7000/hive/list3')
+            .then(function(response){
+                console.log(response)
+                that.chartData=response.data;
+                let temp=[]
+                that.chartData.forEach(element => {
+                    temp.push(element.sumofamount)
+                });
+                that.options.datasets[0].data=temp
+                that.options2.datasets[0].data=temp
+                that.loading=false
+            }) 
+        
+
+
         },
         changeDate() {
             const now = new Date().getTime();
-            this.data.forEach((item, index) => {
-                const date = new Date(now - (6 - index) * 86400000);
-                item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-            });
+            
         },
         handleListener() {
             bus.$on('collapse', this.handleBus);
